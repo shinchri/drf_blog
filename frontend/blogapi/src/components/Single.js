@@ -23,11 +23,11 @@ export default function Post() {
 	const [data, setData] = useState({ posts: [] });
 
 	useEffect(() => {
-		axiosInstance.get(slug).then((res) => {
+		axiosInstance.get(`post/${slug}`).then((res) => {
 			setData({ posts: res.data });
 			console.log(res.data);
 		});
-	}, [setData]);
+	}, [setData, slug]);
 
 	return (
 		<Container component="main" maxWidth="md">
