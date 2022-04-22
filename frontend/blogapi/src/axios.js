@@ -16,6 +16,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log(response)
     return response;
   },
   async function (error) {
@@ -44,7 +45,7 @@ axiosInstance.interceptors.response.use(
       error.response.statusText === "Unauthorized"
     ) {
       const refreshToken = localStorage.getItem("refresh_token");
-
+      console.log('hello')
       if (refreshToken) {
         const tokenParts = JSON.parse(atob(refreshToken.split(".")[1]));
 
@@ -71,7 +72,10 @@ axiosInstance.interceptors.response.use(
             });
         } else {
           console.log("Refresh token is expired", tokenParts.exp, now);
-          window.location.href = "/login/";
+          // localStorage.removeItem("access_token")
+          // localStorage.removeItem("refresh_token")
+          // window.location.href = "/login/";
+          window.location.href = "/logout/";
         }
       } else {
         console.log("Refresh token not available.");

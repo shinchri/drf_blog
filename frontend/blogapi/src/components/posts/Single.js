@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../axios';
-import { useParams } from 'react-router-dom';
+import axiosInstance from '../../axios';
+import { useParams, useHistory } from 'react-router-dom';
 //MaterialUI
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Post() {
 	const { slug } = useParams();
 	const classes = useStyles();
+  const history = useHistory();
 
 	const [data, setData] = useState({ posts: [] });
 
@@ -26,7 +27,10 @@ export default function Post() {
 		axiosInstance.get(`post/${slug}`).then((res) => {
 			setData({ posts: res.data });
 			console.log(res.data);
-		});
+		})
+    .catch((err)=>
+      history.push('/login')
+    );
 	}, [setData, slug]);
 
 	return (
