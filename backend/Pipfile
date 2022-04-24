@@ -10,8 +10,8 @@ django = "*"
 djangorestframework = "*"
 coverage = "*"
 django-cors-headers = "*"
-djangorestframework-simplejwt = "*"
 pillow = "*"
+drf-social-oauth2 = "*"
 
 [requires]
 python_version = "3.9"

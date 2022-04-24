@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../axios';
+import axiosInstance from '../../axios/login';
 import { useHistory } from 'react-router-dom';
+import FbLogin from 'react-facebook-login';
+import FacebookLogin from '../../axios/FacebookLogin'
 //MaterialUI
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -55,19 +57,28 @@ export default function SignIn() {
 		console.log(formData);
 
 		axiosInstance
-			.post(`token/`, {
-				email: formData.email,
+			.post(`auth/token/`, {
+        grant_type: "password",
+				username: formData.email,
 				password: formData.password,
+        client_id: "uJlKIviot9SmXXHiCsxZAXnP9AFhdWwz6CGpjJaO",
+        client_secret: "4gBe8gCMdIPgWql65rCTllc6HEoO3a5vZzPWot746e1dsR2kDM919n7k01Q2JbkkVQfnsADKcOW2dHorM4oIEORmSiSzjFy5aSPKvYoDlOV88vIftCa0Dxr9f33Fq2oh"
 			})
 			.then((res) => {
-        localStorage.setItem("access_token", res.data.access);
-        localStorage.setItem("refresh_token", res.data.refresh);
-				axiosInstance.defaults.headers['Authorization'] =
-					'JWT ' + localStorage.getItem('access_token');
+        localStorage.setItem("access_token", res.data.access_token);
+        localStorage.setItem("refresh_token", res.data.refresh_token);
+				// axiosInstance.defaults.headers['Authorization'] =
+				// 	'JWT ' + localStorage.getItem('access_token');
 				history.push('/');
-				//console.log(res);
-				//console.log(res.data);
+        window.location.reload();
+				// console.log(res);
+				// console.log(res.data);
 			});
+	};
+
+  const responseFacebook = async (response) => {
+    console.log(response)
+		FacebookLogin(response.accessToken);
 	};
 
 	const classes = useStyles();
@@ -119,6 +130,11 @@ export default function SignIn() {
 					>
 						Sign In
 					</Button>
+          <FbLogin 
+            appId="424762231818988"
+            fields="name,email,picture"
+            callback={responseFacebook}
+          />
 					<Grid container>
 						<Grid item xs>
 							<Link href="#" variant="body2">
