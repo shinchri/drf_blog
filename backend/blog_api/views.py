@@ -4,6 +4,10 @@ from .serializers import PostSerializer
 from rest_framework.permissions import SAFE_METHODS, BasePermission,  IsAuthenticatedOrReadOnly, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework import filters
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class PostUserWritePermission(BasePermission):
   message = "Editing posts is restricted to the author only."
@@ -47,10 +51,24 @@ class PostListDetailfilter(generics.ListAPIView):
   # '$' Regex search.
         
 # Post Admin
-class CreatePost(generics.CreateAPIView):
+# class CreatePost(generics.CreateAPIView):
+#   permission_classes = [IsAuthenticated]
+#   queryset = Post.objects.all()
+#   serializer_class = PostSerializer
+
+class CreatePost(APIView):
   permission_classes = [IsAuthenticated]
-  queryset = Post.objects.all()
-  serializer_class = PostSerializer
+  parser_classes = [MultiPartParser, FormParser]
+
+  def post(self, request, format=None):
+    print(request.data) # capture potential error (400) before it hits serializer(possible bad input)
+    serializer = PostSerializer(data=request.data)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+      return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AdminPostDetail(generics.RetrieveAPIView):
   permission_classes = [IsAuthenticated]
